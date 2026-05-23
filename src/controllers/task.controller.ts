@@ -3,7 +3,6 @@ import * as taskService from "../services/task.service";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import { taskCreateSchema, taskListQuerySchema, taskUpdateSchema } from "../utils/validators";
 
-// converte erros de serviço em códigos HTTP adequados
 const mapError = (err: unknown) => {
   const message = err instanceof Error ? err.message : "Erro";
   if (message.includes("não encontrad")) return { status: 404 as const, message };
@@ -28,6 +27,7 @@ export const create = async (req: AuthRequest, res: Response) => {
         description: parsed.data.description,
         listId: parsed.data.listId,
         status: parsed.data.status,
+        priority: parsed.data.priority,
         dueDate: parsed.data.dueDate,
       },
       req.userId
@@ -48,8 +48,8 @@ export const getAll = async (req: AuthRequest, res: Response) => {
     return res.status(401).json({ error: "Não autorizado" });
   }
   try {
-    const tasks = await taskService.getAll(req.userId, parsed.data);
-    return res.json(tasks);
+    const result = await taskService.getAll(req.userId, parsed.data);
+    return res.json(result);
   } catch (err) {
     const { status, message } = mapError(err);
     return res.status(status).json({ error: message });
