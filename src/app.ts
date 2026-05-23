@@ -1,11 +1,13 @@
 import "express-async-errors";
 import express from "express";
+import cors from "cors";
 import authRoutes from "./routes/auth.routes";
 import listRoutes from "./routes/list.routes";
 import taskRoutes from "./routes/task.routes";
 import { errorHandler } from "./middlewares/error.middleware";
 
 const app = express();
+app.use(cors({ origin: process.env.CORS_ORIGIN ?? "http://localhost:5173" }));
 app.use(express.json());
 
 app.use("/auth", authRoutes);
